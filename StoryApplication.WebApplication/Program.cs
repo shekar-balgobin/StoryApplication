@@ -1,24 +1,31 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
-// Add services to the container.
+var webApplicationBuilder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var serviceCollection = webApplicationBuilder.Services;
+serviceCollection.AddControllers();
+serviceCollection.AddEndpointsApiExplorer().AddSwaggerGen(sgo => {
+    sgo.SwaggerDoc(name: "v1", new OpenApiInfo {
+        Contact = new OpenApiContact {
+            Email = "shekar.balgobin@gmail.com",
+            Name = "Shekar Balgobin",
+        },
+        Description = "An API to get the details of the 'best stories' from the Hacker News API",
+        Title = "Developer Coding Test",
+        Version = "v1"
+    });
 
-var app = builder.Build();
+    sgo.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+});
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+var webApplication = webApplicationBuilder.Build();
+if (webApplication.Environment.IsDevelopment()) {
+    webApplication.UseSwagger().UseSwaggerUI(suio => {
+        suio.SwaggerEndpoint(url: "/swagger/v1/swagger.json", name: "Santander");
+    });
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+webApplication.UseHttpsRedirection().UseAuthorization();
+webApplication.MapControllers();
+webApplication.Run();
