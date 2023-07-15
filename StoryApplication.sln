@@ -20,6 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collections.Generic", "Collections.Generic\Collections.Generic.csproj", "{A30EDA6E-233D-47C7-92B8-2B086CF932F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collections.Generic.TestProject", "Collections.Generic.TestProject\Collections.Generic.TestProject.csproj", "{07B44A82-2411-4F05-BCBE-BE93DE5C97F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{E8734FB6-E9E0-46EE-A2E3-61D6EF7093DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8734FB6-E9E0-46EE-A2E3-61D6EF7093DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8734FB6-E9E0-46EE-A2E3-61D6EF7093DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A30EDA6E-233D-47C7-92B8-2B086CF932F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A30EDA6E-233D-47C7-92B8-2B086CF932F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A30EDA6E-233D-47C7-92B8-2B086CF932F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A30EDA6E-233D-47C7-92B8-2B086CF932F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B44A82-2411-4F05-BCBE-BE93DE5C97F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B44A82-2411-4F05-BCBE-BE93DE5C97F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B44A82-2411-4F05-BCBE-BE93DE5C97F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B44A82-2411-4F05-BCBE-BE93DE5C97F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

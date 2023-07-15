@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Santander.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 
-namespace Santander.StoryApplication.WebApplication.Controller;
+namespace Santander.StoryApplication.WebApplication.Story.Controller;
 
 /// <summary>
 /// Best stories.
@@ -12,6 +13,15 @@ namespace Santander.StoryApplication.WebApplication.Controller;
 [Route(template: "api/")]
 public sealed class StoryController :
     ControllerBase {
+    private readonly BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache;
+
+    /// <summary>
+    /// In memory story cache.
+    /// </summary>
+    /// <param name="bufferedMemoryCache"></param>
+    public StoryController(BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache) =>
+        this.bufferedMemoryCache = bufferedMemoryCache;
+
     /// <summary>
     /// The first n 'best stories' from Hacker News API, sorted by score in descending order.
     /// </summary>
@@ -19,13 +29,5 @@ public sealed class StoryController :
     /// <returns></returns>
     [HttpGet("story")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ViewModel.Story>))]
-    public async Task<IActionResult> Get([Range(0, ushort.MaxValue)] int n) {
-        var storyCollection = Enumerable.Range(0, n).Select(i => new ViewModel.Story {
-            Score = (uint)i
-        });
-
-        await Task.Delay(0);
-
-        return Ok(storyCollection);
-    }
+    public IActionResult Get([Range(0, ushort.MaxValue)] int n) => Ok(bufferedMemoryCache.Reader.Values.Take(count: n));
 }
