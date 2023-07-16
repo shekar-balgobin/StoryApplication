@@ -6,9 +6,9 @@ The Hacker News API is documented here: https://github.com/HackerNews/API.
 
 The IDs for the "best stories" can be retrieved from this URI: https://hacker-news.firebaseio.com/v0/beststories.json.
 
-The details for an individual story ID can be retrieved from this URI: https://hacker-news.firebaseio.com/v0/item/21233041.json (in this case for the story with ID21233041).
+The details for an individual story ID can be retrieved from this URI: https://hacker-news.firebaseio.com/v0/item/21233041.json (in this case for the story with ID 21233041).
 
-The API should return an array of the first n "best stories" as returned by the Hacker News API, sorted by their score in a descending order, in the form:
+The API should return an array of the first n 'best stories' as returned by the Hacker News API, sorted by their score in a descending order, in the form:
 
 ```json
 [

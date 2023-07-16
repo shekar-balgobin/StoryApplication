@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
 using Santander.Collections.Generic;
-using Santander.StoryApplication.Story.Query;
 using Santander.StoryApplication.Update.Query;
 using Santander.StoryApplication.WebApplication.Options;
 
@@ -9,17 +8,23 @@ namespace Santander.StoryApplication.WebApplication.Story.BackgroundTask;
 
 internal class PeriodicUpdateBackgroundService :
     AbstractPeriodicBackgroundService {
+    private bool? clearCachedStories;
+
     public PeriodicUpdateBackgroundService(BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache, ILogger<PeriodicUpdateBackgroundService> logger, IMediator mediator, IOptionsMonitor<PeriodicTimerOptions> optionsMonitor) :
         base(logger, mediator, optionsMonitor.Get(name: nameof(PeriodicUpdateBackgroundService))) {
         bufferedMemoryCache.Toggled += BufferedMemoryCache_Toggled;
     }
 
     private void BufferedMemoryCache_Toggled(object? sender, EventArgs e) {
-        Logger.LogDebug(message: "Refreshed");
+        clearCachedStories = true;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken) {
         do {
+            if (!clearCachedStories.HasValue) {
+                continue;
+            }
+
             var getUpdateQuery = new GetUpdateQuery();
             var update = await Mediator.Send(getUpdateQuery, stoppingToken).ConfigureAwait(continueOnCapturedContext: false);
             if (update is null) {
@@ -40,15 +45,13 @@ internal class PeriodicUpdateBackgroundService :
                     continue;
                 }
 
-                var story = new Model.Story {
-                    By = item.By,
-                    Id = item.Id,
-                    Kids = item.Kids,
+                var story = new ViewModel.Story {
+                    CommentCount = item.Kids?.Length,
+                    PostedBy = item.By,
                     Score = item.Score,
-                    Time = item.Time,
+                    Time = item.Time is null ? default : DateTimeOffset.FromUnixTimeSeconds((long)item.Time).UtcDateTime,
                     Title = item.Title,
-                    Type = item.Type,
-                    Url = item.Url
+                    Uri = item.Url
                 };
 
                 Logger.LogDebug(story.ToString());
