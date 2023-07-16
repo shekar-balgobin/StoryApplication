@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Santander.Collections.Generic;
 using Santander.StoryApplication.Story.Query;
+using Santander.StoryApplication.Update.Query;
 using Santander.StoryApplication.WebApplication.Options;
 using Santander.StoryApplication.WebApplication.Story.BackgroundTask;
 using System.Reflection;
@@ -34,8 +35,10 @@ serviceCollection
         });
 
         sgo.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-    })
-    .AddHttpClient(name: nameof(StoryHandler), hc => hc.BaseAddress = new Uri(uriString: "https://hacker-news.firebaseio.com/"));
+    });
+
+serviceCollection.AddHttpClient(name: nameof(UpdateHandler), hc => hc.BaseAddress = new Uri(uriString: "https://hacker-news.firebaseio.com/"));
+serviceCollection.AddHttpClient(name: nameof(StoryHandler), hc => hc.BaseAddress = new Uri(uriString: "https://hacker-news.firebaseio.com/"));
 
 serviceCollection.AddOptions<PeriodicTimerOptions>(name: nameof(PeriodicRefreshBackgroundService)).BindConfiguration(configSectionPath: "PeriodicRefreshTimerOptions").ValidateOnStart();
 serviceCollection.AddOptions<PeriodicTimerOptions>(name: nameof(PeriodicUpdateBackgroundService)).BindConfiguration(configSectionPath: "PeriodicUpdateTimerOptions").ValidateOnStart();
