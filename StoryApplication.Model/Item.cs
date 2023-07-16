@@ -19,11 +19,11 @@ public record class Item {
 
     public uint? Poll { get; init; }
 
-    public required uint Score { get; init; }
+    public required int Score { get; init; }
 
     public string? Text { get; init; }
 
-    public uint? Time { get; init; }
+    public long? Time { get; init; }
 
     public string? Title { get; init; }
 

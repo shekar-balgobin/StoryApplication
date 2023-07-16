@@ -29,5 +29,13 @@ public sealed class StoryController :
     /// <returns></returns>
     [HttpGet("story")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ViewModel.Story>))]
-    public IActionResult Get([Range(minimum: 0, maximum: ushort.MaxValue)] int n) => Ok(bufferedMemoryCache.Reader.Values.Take(count: n));
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public IActionResult Get([Range(minimum: 0, maximum: ushort.MaxValue)] int n = 1) {
+        var storyCollection = bufferedMemoryCache.Reader.Values.Take(count: n);
+        if (!storyCollection.Any()) {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+
+        return Ok(storyCollection);
+    }
 }
