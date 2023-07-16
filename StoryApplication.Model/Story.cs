@@ -1,4 +1,5 @@
 ﻿namespace Santander.StoryApplication.Model;
 
-public sealed record class Story {
+public sealed record class Story :
+    Item {
 }

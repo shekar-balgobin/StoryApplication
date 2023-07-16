@@ -22,6 +22,7 @@ public sealed class BufferedMemoryCache<TKey, TValue> where TKey :
     public void Toggle() {
         lock (locker) {
             (reader, writer) = (writer, reader);
+            writer.Clear();
         }
     }
 

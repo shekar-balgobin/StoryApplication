@@ -9,13 +9,12 @@ namespace Santander.StoryApplication.WebApplication.TestProject.Story.Controller
 public sealed class StoryControllerTest {
     [AutoData]
     [Theory]
-    public void Get(IEnumerable<ViewModel.Story> storyCollection) {
+    public void Get(Dictionary<uint, ViewModel.Story> storyCollection) {
         var bufferedMemoryCache = new BufferedMemoryCache<uint, ViewModel.Story>();
         var writer = bufferedMemoryCache.Writer;
 
-        var id = default(uint);
         foreach (var story in storyCollection) {
-            writer.Add(id++, story);
+            writer.Add(story.Key, story.Value);
         }
 
         bufferedMemoryCache.Toggle();
@@ -26,6 +25,6 @@ public sealed class StoryControllerTest {
         actionResult.Should().BeOfType<OkObjectResult>();
 
         var actual = ((OkObjectResult)actionResult).Value as IEnumerable<ViewModel.Story>;
-        actual.Should().BeEquivalentTo(storyCollection);
+        actual.Should().BeEquivalentTo(storyCollection.Values);
     }
 }

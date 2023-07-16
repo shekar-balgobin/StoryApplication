@@ -4,18 +4,25 @@ namespace Santander.Collections.Generic.TestProject;
 
 public sealed class BufferedMemoryCacheTest {
     [Fact]
-    public void Reader() {
-        var bufferedMemoryCache = new BufferedMemoryCache<bool, bool>();
-        var actual = bufferedMemoryCache.Reader;
+    public void Toggle() {
+        var bufferedMemoryCache = new BufferedMemoryCache<object, object>();
+        var reader = bufferedMemoryCache.Reader as IEnumerable<KeyValuePair<object, object>>;
+        var writer = bufferedMemoryCache.Writer as IEnumerable<KeyValuePair<object, object>>;
 
-        actual.Should().BeAssignableTo<IReadOnlyDictionary<bool, bool>>();
-    }
+        bufferedMemoryCache.Toggle();
 
-    [Fact]
-    public void Writer() {
-        var bufferedMemoryCache = new BufferedMemoryCache<bool, bool>();
-        var actual = bufferedMemoryCache.Writer;
+        reader.Should().NotBeSameAs(bufferedMemoryCache.Reader);
+        writer.Should().NotBeSameAs(bufferedMemoryCache.Writer);
 
-        actual.Should().BeAssignableTo<IDictionary<bool, bool>>();
+        reader.Should().BeSameAs(bufferedMemoryCache.Writer);
+        writer.Should().BeSameAs(bufferedMemoryCache.Reader);
+
+        bufferedMemoryCache.Toggle();
+
+        reader.Should().NotBeSameAs(bufferedMemoryCache.Writer);
+        writer.Should().NotBeSameAs(bufferedMemoryCache.Reader);
+
+        reader.Should().BeSameAs(bufferedMemoryCache.Reader);
+        writer.Should().BeSameAs(bufferedMemoryCache.Writer);
     }
 }

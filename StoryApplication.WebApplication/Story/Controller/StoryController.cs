@@ -29,5 +29,5 @@ public sealed class StoryController :
     /// <returns></returns>
     [HttpGet("story")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ViewModel.Story>))]
-    public IActionResult Get([Range(0, ushort.MaxValue)] int n) => Ok(bufferedMemoryCache.Reader.Values.Take(count: n));
+    public IActionResult Get([Range(minimum: 0, maximum: ushort.MaxValue)] int n) => Ok(bufferedMemoryCache.Reader.Values.Take(count: n));
 }
