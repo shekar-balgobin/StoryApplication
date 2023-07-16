@@ -36,6 +36,6 @@ public sealed class StoryController :
             return StatusCode(StatusCodes.Status503ServiceUnavailable);
         }
 
-        return Ok(storyCollection);
+        return Ok(storyCollection.OrderByDescending(s => s.Score));
     }
 }

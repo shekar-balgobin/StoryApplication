@@ -4,12 +4,15 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Santander.Collections.Generic;
 using Santander.StoryApplication.WebApplication.Options;
 using Santander.StoryApplication.WebApplication.Story.BackgroundTask;
 
 namespace Santander.StoryApplication.WebApplication.TestProject.Story.BackgroundTask;
 
 public sealed class PeriodicUpdateBackgroundServiceTest {
+    private readonly BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache = new();
+
     private readonly CancellationTokenSource cancellationTokenSource = new();
 
     private readonly ILogger<PeriodicUpdateBackgroundService> logger = Mock.Of<ILogger<PeriodicUpdateBackgroundService>>();
@@ -28,7 +31,7 @@ public sealed class PeriodicUpdateBackgroundServiceTest {
             Period = TimeSpan.FromMilliseconds(periodMilliseconds)
         });
 
-        var periodicUpdateBackgroundService = new DerivedPeriodicUpdateBackgroundService(logger, mediator, optionsMonitor.Object);
+        var periodicUpdateBackgroundService = new DerivedPeriodicUpdateBackgroundService(bufferedMemoryCache, logger, mediator, optionsMonitor.Object);
         var action = async () => await periodicUpdateBackgroundService.ExecuteAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         await action.Should().ThrowAsync<OperationCanceledException>();

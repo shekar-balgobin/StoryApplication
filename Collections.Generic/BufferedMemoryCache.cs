@@ -10,6 +10,8 @@ public sealed class BufferedMemoryCache<TKey, TValue> where TKey :
 
     private readonly SortedDictionary<TKey, TValue> sortedDictionaryB = new();
 
+    public event EventHandler? Toggled;
+
     private SortedDictionary<TKey, TValue> writer;
 
     public BufferedMemoryCache() {
@@ -24,6 +26,8 @@ public sealed class BufferedMemoryCache<TKey, TValue> where TKey :
             (reader, writer) = (writer, reader);
             writer.Clear();
         }
+
+        Toggled?.Invoke(sender: this, EventArgs.Empty);
     }
 
     public IDictionary<TKey, TValue> Writer => writer;
