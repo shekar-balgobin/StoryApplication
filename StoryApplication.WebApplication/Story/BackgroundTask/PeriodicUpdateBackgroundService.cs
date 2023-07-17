@@ -8,10 +8,15 @@ namespace Santander.StoryApplication.WebApplication.Story.BackgroundTask;
 
 internal class PeriodicUpdateBackgroundService :
     AbstractPeriodicBackgroundService {
+    private readonly BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache;
+
     private bool? clearCachedStories;
 
-    public PeriodicUpdateBackgroundService(BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache, ILogger<PeriodicUpdateBackgroundService> logger, IMediator mediator, IOptionsMonitor<PeriodicTimerOptions> optionsMonitor) :
+    private readonly ConcurrentMemoryCache<uint, ViewModel.Story> concurrentMemoryCache;
+
+    public PeriodicUpdateBackgroundService(BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache, ConcurrentMemoryCache<uint, ViewModel.Story> concurrentMemoryCache, ILogger<PeriodicUpdateBackgroundService> logger, IMediator mediator, IOptionsMonitor<PeriodicTimerOptions> optionsMonitor) :
         base(logger, mediator, optionsMonitor.Get(name: nameof(PeriodicUpdateBackgroundService))) {
+        (this.bufferedMemoryCache, this.concurrentMemoryCache) = (bufferedMemoryCache, concurrentMemoryCache);
         bufferedMemoryCache.Toggled += BufferedMemoryCache_Toggled;
     }
 
@@ -29,6 +34,12 @@ internal class PeriodicUpdateBackgroundService :
             var update = await Mediator.Send(getUpdateQuery, stoppingToken).ConfigureAwait(continueOnCapturedContext: false);
             if (update is null) {
                 continue;
+            }
+
+            var writer = concurrentMemoryCache.Writer;
+            if (clearCachedStories.Value) {
+                writer.Clear();
+                clearCachedStories = false;
             }
 
             foreach (var itemIdentifier in update.Items) {
@@ -54,8 +65,13 @@ internal class PeriodicUpdateBackgroundService :
                     Uri = item.Url
                 };
 
-                Logger.LogDebug(story.ToString());
+                if (!writer.TryAdd(item.Id, story)) {
+                    writer.Remove(item.Id);
+                    writer.Add(item.Id, story);
+                }
             }
+
+            Logger.LogInformation("Cache contains an additional {count} story updates", writer.Count);
         } while (await PeriodicTimer.Value.WaitForNextTickAsync(stoppingToken).ConfigureAwait(continueOnCapturedContext: false));
     }
 }

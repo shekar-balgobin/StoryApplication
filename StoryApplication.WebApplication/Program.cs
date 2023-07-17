@@ -23,6 +23,7 @@ serviceCollection
     .AddHostedService<PeriodicUpdateBackgroundService>()
     .AddMediatR(msc => msc.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
     .AddSingleton<BufferedMemoryCache<uint, SSA.ViewModel.Story>>()
+    .AddSingleton<ConcurrentMemoryCache<uint, SSA.ViewModel.Story>>()
     .AddSwaggerGen(sgo => {
         sgo.SwaggerDoc(name: "v1", new OpenApiInfo {
             Contact = new OpenApiContact {

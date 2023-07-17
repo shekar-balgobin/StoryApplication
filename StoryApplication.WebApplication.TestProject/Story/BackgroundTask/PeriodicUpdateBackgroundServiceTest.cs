@@ -13,6 +13,8 @@ namespace Santander.StoryApplication.WebApplication.TestProject.Story.Background
 public sealed class PeriodicUpdateBackgroundServiceTest {
     private readonly BufferedMemoryCache<uint, ViewModel.Story> bufferedMemoryCache = new();
 
+    private readonly ConcurrentMemoryCache<uint, ViewModel.Story> concurrentMemoryCache = new();
+
     private readonly CancellationTokenSource cancellationTokenSource = new();
 
     private readonly ILogger<PeriodicUpdateBackgroundService> logger = Mock.Of<ILogger<PeriodicUpdateBackgroundService>>();
@@ -31,7 +33,7 @@ public sealed class PeriodicUpdateBackgroundServiceTest {
             Period = TimeSpan.FromMilliseconds(periodMilliseconds)
         });
 
-        var periodicUpdateBackgroundService = new DerivedPeriodicUpdateBackgroundService(bufferedMemoryCache, logger, mediator, optionsMonitor.Object);
+        var periodicUpdateBackgroundService = new DerivedPeriodicUpdateBackgroundService(bufferedMemoryCache, concurrentMemoryCache, logger, mediator, optionsMonitor.Object);
         var action = async () => await periodicUpdateBackgroundService.ExecuteAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false);
 
         await action.Should().ThrowAsync<OperationCanceledException>();

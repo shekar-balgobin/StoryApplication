@@ -1,22 +1,24 @@
-﻿namespace Santander.Collections.Generic;
+﻿using System.Collections.Concurrent;
+
+namespace Santander.Collections.Generic;
 
 public sealed class BufferedMemoryCache<TKey, TValue> where TKey :
     notnull {
     private readonly object locker = new();
 
-    private SortedDictionary<TKey, TValue> reader;
+    private ConcurrentDictionary<TKey, TValue> reader;
 
-    private readonly SortedDictionary<TKey, TValue> sortedDictionaryA = new();
+    private readonly ConcurrentDictionary<TKey, TValue> concurrentDictionaryA = new();
 
-    private readonly SortedDictionary<TKey, TValue> sortedDictionaryB = new();
+    private readonly ConcurrentDictionary<TKey, TValue> concurrentDictionaryB = new();
 
     public event EventHandler? Toggled;
 
-    private SortedDictionary<TKey, TValue> writer;
+    private ConcurrentDictionary<TKey, TValue> writer;
 
     public BufferedMemoryCache() {
-        reader = sortedDictionaryA;
-        writer = sortedDictionaryB;
+        reader = concurrentDictionaryA;
+        writer = concurrentDictionaryB;
     }
 
     public IReadOnlyDictionary<TKey, TValue> Reader => reader;

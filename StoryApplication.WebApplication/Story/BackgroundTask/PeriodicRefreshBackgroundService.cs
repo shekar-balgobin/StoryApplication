@@ -42,7 +42,7 @@ internal class PeriodicRefreshBackgroundService :
 
             bufferedMemoryCache.Toggle();
 
-            Logger.LogInformation("Refreshed {Count} stories", writer.Count);
+            Logger.LogInformation("Cache contains {count} new stories", writer.Count);
         } while (await PeriodicTimer.Value.WaitForNextTickAsync(stoppingToken).ConfigureAwait(continueOnCapturedContext: false));
     }
 }
